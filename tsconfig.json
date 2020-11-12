@@ -1,12 +1,20 @@
 {
+  "ts-node": {
+    "transpileOnly": true,
     "compilerOptions": {
-      "target": "es2015",
-      "module": "commonjs",
-      "declaration": true,
-      "outDir": "./lib",
-      "strict": true,
-      "moduleResolution": "node",
-      "esModuleInterop": true,      
+      "module": "commonjs"
     },
-    "exclude": ["node_modules", "src/__tests__", "lib"]
-  }
+    "include": ["tests/**/*"]
+  },
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "commonjs",
+    "declaration": true,
+    "outDir": "./lib",
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true
+  },
+  "include": ["@types/**/*", "src/**/*"],
+  "exclude": ["node_modules", "lib"]
+}
