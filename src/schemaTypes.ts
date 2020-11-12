@@ -47,6 +47,12 @@ export type Schema =
   | ArraySchema
   | ObjectSchema;
 
+export interface TopLevelScehma extends ObjectSchema {
+  title?: string;
+  $id?: string;
+  definitions?: { [key: string]: Schema };
+}
+
 export const resolveType = (data: any): SchemaType => {
   switch (typeof data) {
     case "number":
