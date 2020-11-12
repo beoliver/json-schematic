@@ -1,7 +1,6 @@
 import { test } from "uvu";
 import * as assert from "uvu/assert";
-import { describe } from "../src/describe";
-import { unifySchemas } from "../src/unify";
+import { describe, unifySchemas } from "../src/index";
 
 test("Test 4", () => {
   const a = { foo: [{ name: "a" }, { name: "b" }] };

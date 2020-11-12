@@ -1,6 +1,6 @@
 import { test } from "uvu";
 import * as assert from "uvu/assert";
-import { describe } from "../src/describe";
+import { describe } from "../src/index";
 
 test("Test 1", () => {
   const data = { hello: "world" };
