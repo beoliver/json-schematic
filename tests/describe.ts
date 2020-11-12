@@ -1,6 +1,6 @@
 import { test } from "uvu";
 import * as assert from "uvu/assert";
-import { describe } from "../src/index";
+import { describeObject } from "../src/index";
 
 test("Test 1", () => {
   const data = { hello: "world" };
@@ -14,7 +14,25 @@ test("Test 1", () => {
     required: ["hello"],
     type: "object",
   };
-  assert.equal(describe(data), schema);
+  assert.equal(describeObject(data), schema);
+});
+
+test("Mary", () => {
+  const data = { name: "Mary", known: true };
+  const schema = {
+    properties: {
+      name: {
+        enum: ["Mary"],
+        type: "string",
+      },
+      known: {
+        type: "boolean",
+      },
+    },
+    required: ["name", "known"],
+    type: "object",
+  };
+  assert.equal(describeObject(data), schema);
 });
 
 test.run();

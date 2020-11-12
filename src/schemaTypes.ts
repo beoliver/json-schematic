@@ -2,12 +2,17 @@ export type SchemaType =
   | "boolean"
   | "string"
   | "number"
+  | "bigint"
   | "null"
   | "object"
   | "array";
 
 interface BaseSchema {
-  type: SchemaType;
+  type?: SchemaType;
+}
+
+export interface AnyOfSchema extends BaseSchema {
+  anyOf: Schema[];
 }
 
 export interface NullSchema extends BaseSchema {
@@ -20,6 +25,10 @@ export interface BooleanSchema extends BaseSchema {
 
 export interface NumberSchema extends BaseSchema {
   type: "number";
+}
+
+export interface BigIntSchema extends BaseSchema {
+  type: "bigint";
 }
 
 export interface ObjectSchema extends BaseSchema {
@@ -40,9 +49,11 @@ export interface StringSchema extends BaseSchema {
 }
 
 export type Schema =
+  | AnyOfSchema
   | NullSchema
   | BooleanSchema
   | NumberSchema
+  | BigIntSchema
   | StringSchema
   | ArraySchema
   | ObjectSchema;
@@ -58,7 +69,7 @@ export const resolveType = (data: any): SchemaType => {
     case "number":
       return "number";
     case "bigint":
-      return "number";
+      return "bigint";
     case "string":
       return "string";
     case "boolean":

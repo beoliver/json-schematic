@@ -1,2 +1,2 @@
-export { describe } from "./describe";
+export { describeObject } from "./describe";
 export { unifySchemas } from "./unify";

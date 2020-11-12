@@ -1,5 +1,6 @@
 import {
   ArraySchema,
+  BigIntSchema,
   BooleanSchema,
   NullSchema,
   NumberSchema,
@@ -8,7 +9,15 @@ import {
   StringSchema,
 } from "./schemaTypes";
 
-export const describe = (data: any) => {
+export const describeObject = (obj: any) => {
+  const t = resolveType(obj);
+  if (t !== "object") {
+    throw new Error(`describeObject expects an object to be passed. Got: ${t}`);
+  }
+  return _describeObject(obj as object);
+};
+
+const describe = (data: any) => {
   switch (resolveType(data)) {
     case "null": {
       return nullSchema;
@@ -16,17 +25,20 @@ export const describe = (data: any) => {
     case "number": {
       return numberSchema;
     }
+    case "bigint": {
+      return bigintSchema;
+    }
     case "boolean": {
       return booleanSchema;
     }
     case "string": {
-      return describeString(data as string);
+      return _describeString(data as string);
     }
     case "object": {
-      return describeObject(data as object);
+      return _describeObject(data as object);
     }
     case "array": {
-      return describeArray(data as any[]);
+      return _describeArray(data as any[]);
     }
   }
 };
@@ -39,11 +51,15 @@ const numberSchema: NumberSchema = {
   type: "number",
 };
 
+const bigintSchema: BigIntSchema = {
+  type: "bigint",
+};
+
 const nullSchema: NullSchema = {
   type: "null",
 };
 
-const describeObject = (o: object) => {
+const _describeObject = (o: object) => {
   const schema: ObjectSchema = {
     type: "object",
     properties: {},
@@ -55,7 +71,7 @@ const describeObject = (o: object) => {
   return schema;
 };
 
-const describeArray = (a: any[]) => {
+const _describeArray = (a: any[]) => {
   const schema: ArraySchema = {
     type: "array",
     items: a.map((item) => describe(item)),
@@ -63,7 +79,7 @@ const describeArray = (a: any[]) => {
   return schema;
 };
 
-const describeString = (s: string) => {
+const _describeString = (s: string) => {
   const schema: StringSchema = {
     type: "string",
     enum: [s],
