@@ -62,22 +62,6 @@ If the schema returned by `describe` is an **overfitting** of the data, the `wea
     type  : "array",
     items : [
         {type : "string", enum : ["a"] },
-        {type : "string", enum : ["b"] },
-        {type : "string", enum : ["c"] }
-    ]
-};
-> weaken(schema, { tuplesAsArrays : true })
-{
-    type  : "array",
-    items : { type : "string", enum : ["a", "b", "c"] },
-};
-```
-
-```js
-> const schema = {
-    type  : "array",
-    items : [
-        {type : "string", enum : ["a"] },
         {type : "number" },
     ]
 };
@@ -85,6 +69,24 @@ If the schema returned by `describe` is an **overfitting** of the data, the `wea
 {
     type  : "array",
     items : { "anyOf" [ { type : "string" },  { type : "number" } ] } ,
+};
+```
+
+```js
+> const data = [1, 2, "three", "four", 5];
+> weaken(describe(data), { tuplesAsArrays: true });
+{
+    type: "array",
+    items: {
+      anyOf: [{ type: "number" }, { type: "string", enum: ["three", "four"] }],
+    },
+};
+> weaken(describe(data), { tuplesAsArrays: true, noEnumeratedStrings : true });
+{
+    type: "array",
+    items: {
+      anyOf: [{ type: "number" }, { type: "string" }],
+    },
 };
 ```
 

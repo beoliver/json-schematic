@@ -100,4 +100,17 @@ test("weaken array test 1", () => {
   );
 });
 
+test("weaken array test 2", () => {
+  const data = [1, 2, "three", "four", 5];
+  const d = describe(data);
+  const w = weaken(d, { tuplesAsArrays: true });
+  const schema = {
+    type: "array",
+    items: {
+      anyOf: [{ type: "number" }, { type: "string", enum: ["three", "four"] }],
+    },
+  };
+  assert.equal(w, schema);
+});
+
 test.run();
