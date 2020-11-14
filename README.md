@@ -14,34 +14,78 @@ One of the main benefits of autogenerating interfaces from schemas - is that you
 
 # API
 
-## `describeObject`
+## `describe`
 
-The `describeObject` function recursively traverses the input building up a json schema.
-
-```ts
-const describeObject: (obj: any) => Schema;
-```
-
-**Note:** Throws an error if `typeof obj` is not equal to `"object"` and `obj.constructor` is not equal to `Object`.
-
-## `unifySchemas`
+### Construct a schema from data.
 
 ```ts
-const unifySchemas: (schemas: Schema[], options?: UnificationOptions) => Schema;
+const describe: (data: any) => Schema;
 ```
 
-Given a **non empty** array of schemas the `unifySchemas` function attempts to create a single schema `S` such that for every schema `s` in `schemas` and every possible input `x`
+Returns a **strict** schema in the sense that the schema is most likely **over fitting** the data. The returned schema can be mapped onto a Typescript interface such that the compile time guarantees of typescript are equivalent to the the guarantees that the schema provides for validation.
 
-```latex
-(validates(s_1,x) | ... | validates(s_n, x)) => validates(S,x)
+In other words - If you construct an element using an interface generaterated from a schema and the code compiles using inference alone - then the schema is guaranteed to validate the data.
+This means that certain json schema contraints are not available.
+
+```
+validates(data, Schema) <=> compiles(data : SchemaInterface)
 ```
 
-This means that given some arbitrary input `x` - if there exists a schema `s` in the array of `schemas` such that `s` **validates** `x` - then the resulting schema `S` will also **validate** `x`. If there **DOES NOT** exist a schema `s` in the array of `schemas` such that `s` **validates** `x`, then `validates(S,x)` may still be **true**.
-
-### **Important**
-
-The following propoerty **DOES NOT** hold.
-
-```latex
-validates(S,x) => (validates(s_1,x) | ... | validates(s_n, x))
+```js
+> const data = ["a", "b", "c"];
+> describe(data)
+{
+    type  : "array",
+    items : [
+        {type : "string", enum : ["a"] },
+        {type : "string", enum : ["b"] },
+        {type : "string", enum : ["c"] }
+    ]
+}
 ```
+
+## `weaken`
+
+```ts
+const weaken: (schema: Schema, options?: WeakenOptions) => Schema;
+```
+
+If the schema returned by `describe` is an **overfitting** of the data, the `weaken` function can be used to relax the schema. The default options mean that `weaken` serves as the identity function.
+
+| Option                | default     | value  | enabled                                                                     | disabled |
+| --------------------- | ----------- | ------ | --------------------------------------------------------------------------- | -------- |
+| `noEnumeratedStrings` | `undefined` | `true` | Enumeration information is removed from strings.                            | No-op    |
+| `tuplesAsArrays`      | `undefined` | `true` | Array length is ignored. Creates a union of possible types using `"anyOf"`. | No-op    |
+
+```js
+> const schema = {
+    type  : "array",
+    items : [
+        {type : "string", enum : ["a"] },
+        {type : "string", enum : ["b"] },
+        {type : "string", enum : ["c"] }
+    ]
+};
+> weaken(schema, { tuplesAsArrays : true })
+{
+    type  : "array",
+    items : { type : "string", enum : ["a", "b", "c"] },
+};
+```
+
+```js
+> const schema = {
+    type  : "array",
+    items : [
+        {type : "string", enum : ["a"] },
+        {type : "number" },
+    ]
+};
+> weaken(schema, { noEnumeratedStrings : true, tuplesAsArrays : true })
+{
+    type  : "array",
+    items : { "anyOf" [ { type : "string" },  { type : "number" } ] } ,
+};
+```
+
+See the next section for more information about how schemas are unified.
