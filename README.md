@@ -8,9 +8,7 @@ Lets you generate JSON-schemas from sample data.
 
 ## Why is it opinionated?
 
-JSON schemas can describe more that Typescript. This can be a useful property - however my personal preference is to keep the **fidelty** of the schema as close to the compile time guarantees of Typescript - especially when working in a team.
-
-One of the main benefits of autogenerating interfaces from schemas - is that you can get safety when type casting and a nicer developer (editor) experience.
+JSON schemas can describe more that Typescript. This can be a useful property - however my personal preference is to keep the **fidelity** of the schema as close to the compile time guarantees of Typescript - especially when working in a team.
 
 # API
 
