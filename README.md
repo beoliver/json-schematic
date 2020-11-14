@@ -58,21 +58,6 @@ If the schema returned by `describe` is an **overfitting** of the data, the `wea
 | `tuplesAsArrays`      | `undefined` | `true` | Array length is ignored. Creates a union of possible types using `"anyOf"`. | No-op    |
 
 ```js
-> const schema = {
-    type  : "array",
-    items : [
-        {type : "string", enum : ["a"] },
-        {type : "number" },
-    ]
-};
-> weaken(schema, { noEnumeratedStrings : true, tuplesAsArrays : true })
-{
-    type  : "array",
-    items : { "anyOf" [ { type : "string" },  { type : "number" } ] } ,
-};
-```
-
-```js
 > const data = [1, 2, "three", "four", 5];
 > weaken(describe(data), { tuplesAsArrays: true });
 {
@@ -89,5 +74,3 @@ If the schema returned by `describe` is an **overfitting** of the data, the `wea
     },
 };
 ```
-
-See the next section for more information about how schemas are unified.
