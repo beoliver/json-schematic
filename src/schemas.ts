@@ -276,3 +276,71 @@ export const postWalk = (schema: Schema, f: (s: Schema) => Schema): Schema => {
     }
   }
 };
+
+// validData = [d1, d2, d3]
+// schemas = [s1, s2, s3]
+
+// v(s1,d1) & v(s2,d2) & v(s3,d3)
+
+// \forall x : (\exists s_k : v(s_k, x)) ==>  v(S, x)
+// if one schema validates x then S validates x
+// if one schema does not validate x then S MAY validate x
+// allows for "invalid" inputs.
+// matches all "valid" inputs.
+// schema is WEAK (eg {})
+// not very useful
+// complete but not sound
+// useful - if we are concerned with just getting some data
+
+// \forall x : v(S, x) ==> (\exists s_k : v(s_k, x))
+// if S validates x then at least one schema validates x
+// if S does not validate x then one schema MAY validate x
+// does not allow for "invalid" data...
+// may not match all "valid" inputs
+// sound but not complete
+// schema is OVERFITTED for some schema s_k
+// useful - if we are concerned with STRICT validation
+
+// \forall x : v(S, x) <==> (\exists s_k : v(s_k, x))
+// create a schema for each input.
+// new schema = union of schemas
+// sound AND complete (*only* for input examples)
+// more examples makes more complete. would not affect soundness.
+// drawback is that interfaces/schemas will be large/confusing and probably dont capture the domain.
+
+// invalid examples.
+// 1. make sure that example is not accepted by an *overfitted* schema. This is a USER ERROR.
+// eg [1] is valid but [2] is invalid. as [Number] or [Number]
+
+const validExamples = [{ foo: "a" }, { foo: "b" }, { foo: "c", bar: "a" }];
+
+const o1 = {
+  properties: {
+    foo: { type: "string", enum: ["a", "b", "c"] },
+    bar: { type: "string", enum: ["a"] },
+  },
+  required: ["foo"],
+};
+
+interface O1 {
+  foo: "a" | "b" | "c";
+  bar?: "a";
+}
+
+const o2 = {
+  oneOf: [
+    {
+      properties: {
+        foo: { type: "string", enum: ["a", "b"] },
+      },
+      required: ["foo"],
+    },
+    {
+      properties: {
+        foo: { type: "string", enum: ["c"] },
+        bar: { type: "string", enum: ["a"] },
+      },
+      required: ["foo", "bar"],
+    },
+  ],
+};

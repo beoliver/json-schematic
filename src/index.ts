@@ -1,3 +1,3 @@
 export { describe } from "./schemas";
-// export { unifySchemas } from "./unify";
+export { union } from "./union";
 export { weaken } from "./weaken";
